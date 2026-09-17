@@ -1,0 +1,55 @@
+ext {
+    junitVersion = project.hasProperty('junitVersion') ? rootProject.ext.junitVersion : '4.13.2'
+}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.1'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.21'
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+android {
+    namespace "io.nativelement.demostarter"
+    compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 34
+    defaultConfig {
+        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 23
+        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 34
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    // Required for com.microsoft.device.display:display-mask, a transitive
+    // dependency of com.microsoft.identity:common (pulled in by MSAL) that
+    // isn't published to Maven Central/Google.
+    maven {
+        url 'https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1'
+        name 'Duo-SDK-Feed'
+    }
+}
+
+dependencies {
+    implementation project(':capacitor-android')
+    implementation "com.microsoft.identity.client:msal:5.+"
+    // capacitor-android's Plugin.getActivity() returns AppCompatActivity; Kotlin
+    // requires this type to be directly resolvable on this module's own
+    // classpath (not just transitively via capacitor-android) to compile
+    // against it.
+    implementation "androidx.appcompat:appcompat:1.6.1"
+}

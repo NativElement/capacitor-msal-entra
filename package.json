@@ -1,0 +1,44 @@
+{
+  "name": "capacitor-msal-entra-plugin",
+  "version": "0.1.0",
+  "description": "Capacitor plugin wrapping native MSAL SDKs (Android/iOS) for Entra External ID auth",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "dist/",
+    "ios/Plugin/",
+    "web/",
+    "CapacitorMsalEntraPlugin.podspec"
+  ],
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && tsc && rollup -c rollup.config.js",
+    "watch": "tsc --watch"
+  },
+  "dependencies": {
+    "@azure/msal-browser": "^5.22.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "rollup": "^4.9.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependencies": {
+    "@capacitor/core": ">=6.0.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}

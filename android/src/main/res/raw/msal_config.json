@@ -1,0 +1,14 @@
+{
+  "client_id": "<ANDROID_APP_CLIENT_ID>",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msauth://com.yourcompany.loyaltyos/<BASE64_URL_ENCODED_SIGNATURE_HASH>",
+  "account_mode": "MULTIPLE",
+  "broker_redirect_uri_registered": false,
+  "authorities": [
+    {
+      "type": "CIAM",
+      "default": true,
+      "authority_url": "https://<your-tenant-subdomain>.ciamlogin.com/<your-tenant-subdomain>.onmicrosoft.com/"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Build output
+dist/
+
+# Android (Gradle)
+android/build/
+android/.gradle/
+
+# System files
+.DS_Store

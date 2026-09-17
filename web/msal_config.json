@@ -1,0 +1,6 @@
+{
+  "client_id": "<WEB_APP_CLIENT_ID>",
+  "authority_url": "https://<your-tenant-subdomain>.ciamlogin.com/<your-tenant-subdomain>.onmicrosoft.com/",
+  "redirect_uri": "https://<your-app-host>/",
+  "known_authorities": []
+}
