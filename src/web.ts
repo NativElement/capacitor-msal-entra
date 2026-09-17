@@ -105,10 +105,10 @@ export class MsalAuthWeb extends WebPlugin implements MsalAuthPlugin {
     }
   }
 
-  async getAccount(): Promise<AccountInfo | null> {
+  async getAccount(): Promise<{ value: AccountInfo | null }> {
     const pca = await this.getInstance();
     const account = pca.getActiveAccount() ?? pca.getAllAccounts()[0] ?? null;
-    return account ? this.toAccountInfo(account) : null;
+    return { value: account ? this.toAccountInfo(account) : null };
   }
 
   async signOut(options?: SignOutOptions): Promise<void> {

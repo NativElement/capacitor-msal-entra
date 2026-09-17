@@ -1,6 +1,6 @@
 {
   "name": "capacitor-msal-entra-plugin",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Capacitor plugin wrapping native MSAL SDKs (Android/iOS) for Entra External ID auth",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

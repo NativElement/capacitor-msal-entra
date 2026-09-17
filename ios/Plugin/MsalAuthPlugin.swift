@@ -131,11 +131,15 @@ public class MsalAuthPlugin: CAPPlugin, CAPBridgedPlugin {
 
     @objc func getAccount(_ call: CAPPluginCall) {
         guard let application = application else {
+            NSLog("MsalAuthPlugin: getAccount() - application is nil")
             call.resolve(["value": NSNull()])
             return
         }
         do {
-            guard let account = try application.allAccounts().first else {
+            let accounts = try application.allAccounts()
+            NSLog("MsalAuthPlugin: getAccount() - allAccounts() returned %d account(s): %@",
+                  accounts.count, accounts.map { "\($0.identifier ?? "?") / \($0.username ?? "?")" })
+            guard let account = accounts.first else {
                 call.resolve(["value": NSNull()])
                 return
             }
@@ -147,23 +151,35 @@ public class MsalAuthPlugin: CAPPlugin, CAPBridgedPlugin {
                 ]
             ])
         } catch {
+            NSLog("MsalAuthPlugin: getAccount() - allAccounts() threw %@", String(describing: error))
             call.reject(error.localizedDescription, "GET_ACCOUNT_FAILED", error)
         }
     }
 
     @objc func signOut(_ call: CAPPluginCall) {
         guard let application = application else {
+            NSLog("MsalAuthPlugin: signOut() - application is nil")
             call.resolve()
             return
         }
         do {
-            guard let account = try application.allAccounts().first else {
-                call.resolve()
-                return
+            // Remove every cached account, not just the first - MSAL's
+            // Keychain-backed cache can accumulate more than one account
+            // over time (e.g. testing with different sign-ins), and
+            // signOut() must guarantee no account remains afterward, not
+            // just remove whichever one happens to be first in the list.
+            let accounts = try application.allAccounts()
+            NSLog("MsalAuthPlugin: signOut() - allAccounts() found %d account(s) to remove: %@",
+                  accounts.count, accounts.map { "\($0.identifier ?? "?") / \($0.username ?? "?")" })
+            for account in accounts {
+                try application.remove(account)
+                NSLog("MsalAuthPlugin: signOut() - removed account %@", account.identifier ?? "?")
             }
-            try application.remove(account)
+            let remaining = try application.allAccounts()
+            NSLog("MsalAuthPlugin: signOut() - after removal, allAccounts() returns %d account(s)", remaining.count)
             call.resolve()
         } catch {
+            NSLog("MsalAuthPlugin: signOut() - threw %@", String(describing: error))
             call.reject(error.localizedDescription, "SIGN_OUT_FAILED", error)
         }
     }

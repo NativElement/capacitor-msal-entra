@@ -185,18 +185,35 @@ class MsalAuthPlugin : Plugin() {
                     call.resolve()
                     return
                 }
-                application.removeAccount(
-                    accounts.first(),
-                    object : IMultipleAccountPublicClientApplication.RemoveAccountCallback {
-                        override fun onRemoved() {
-                            call.resolve()
-                        }
+                // Remove every cached account, not just the first - MSAL's
+                // encrypted cache can accumulate more than one account over
+                // time, and signOut() must guarantee no account remains
+                // afterward, not just remove whichever one happens to be
+                // first in the list. Callbacks land on the main thread (MSAL
+                // Android convention), so plain vars are safe here without
+                // atomics.
+                var remaining = accounts.size
+                var failed = false
+                for (account in accounts) {
+                    application.removeAccount(
+                        account,
+                        object : IMultipleAccountPublicClientApplication.RemoveAccountCallback {
+                            override fun onRemoved() {
+                                remaining--
+                                if (remaining == 0 && !failed) {
+                                    call.resolve()
+                                }
+                            }
 
-                        override fun onError(exception: MsalException) {
-                            call.reject(exception.message, "SIGN_OUT_FAILED", exception)
+                            override fun onError(exception: MsalException) {
+                                if (!failed) {
+                                    failed = true
+                                    call.reject(exception.message, "SIGN_OUT_FAILED", exception)
+                                }
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             override fun onError(exception: MsalException) {

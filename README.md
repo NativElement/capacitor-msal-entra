@@ -249,6 +249,169 @@ routing to Apple's own business identity portal instead of "Sign in with
 Apple"). For a custom OIDC provider, use the domain segment of its issuer URI
 instead (e.g. `'www.linkedin.com'` for LinkedIn).
 
+## 6. Backend API: validating the access token
+
+The `accessToken` returned by `signIn()` / `acquireTokenSilent()` is a JWT
+issued by the External ID (CIAM) tenant, scoped to your API via the
+`scopes` you requested (e.g. `api://<api-client-id>/read`). The client
+sends it as `Authorization: Bearer <accessToken>`; your API must validate
+it on every request rather than trust it blindly. For a CIAM tenant the
+token has this shape (decode any token at [jwt.ms](https://jwt.ms) to
+check yours):
+
+- `iss`: `https://<tenant-id>.ciamlogin.com/<tenant-id>/v2.0`
+- `aud`: your API's Application (client) ID, or its Application ID URI
+  (e.g. `api://<api-client-id>`) if you set one under **Expose an API**
+- `scp`: a space-separated list of the *bare* scope names the token was
+  granted, e.g. `"read write"` — not the full `api://...` URI
+- signature: RS256, verified against the tenant's JWKS
+  (`https://<tenant-id>.ciamlogin.com/<tenant-id>/discovery/v2.0/keys`,
+  discoverable from
+  `https://<tenant-id>.ciamlogin.com/<tenant-id>/v2.0/.well-known/openid-configuration`)
+
+Never skip signature/issuer/audience checks and never decode-and-trust a
+token client-side — validation has to happen on the API.
+
+### .NET (ASP.NET Core + Microsoft.Identity.Web)
+
+This follows Microsoft's own pattern for protecting an ASP.NET Core API
+against an External ID tenant.
+
+```bash
+dotnet add package Microsoft.Identity.Web
+```
+
+`appsettings.json`:
+
+```json
+{
+  "AzureAd": {
+    "Instance": "https://<tenant-subdomain>.ciamlogin.com/",
+    "TenantId": "<tenant-id>",
+    "ClientId": "<api-client-id>",
+    "Scopes": {
+      "Read": ["read", "write"],
+      "Write": ["write"]
+    }
+  }
+}
+```
+
+`Program.cs`:
+
+```csharp
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+```
+
+Controller:
+
+```csharp
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
+
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class WidgetsController : ControllerBase
+{
+    [HttpGet]
+    [RequiredScopeOrAppPermission(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
+    public IActionResult Get() => Ok(new[] { "widget-1", "widget-2" });
+
+    [HttpPost]
+    [RequiredScopeOrAppPermission(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
+    public IActionResult Post([FromBody] object widget) => Created("", widget);
+}
+```
+
+`[Authorize]` rejects anything that fails signature/issuer/audience/expiry
+validation; `Microsoft.Identity.Web` handles all of that from the
+`AzureAd` config above. `[RequiredScopeOrAppPermission]` then checks the
+token's `scp` (or `roles`, for app-only calls) against the configured
+scope list and returns `403` if it doesn't match.
+
+### Express.js (Node)
+
+There's no CIAM-specific Microsoft package for Express — `passport-azure-ad`
+predates External ID and isn't a good fit. The standard approach is
+`express-jwt` + `jwks-rsa`, which is generic OIDC/JWT validation, not
+Microsoft-specific:
+
+```bash
+npm install express express-jwt jwks-rsa
+```
+
+```javascript
+const express = require('express');
+const { expressjwt: jwt } = require('express-jwt');
+const jwksRsa = require('jwks-rsa');
+
+const TENANT_ID = '<tenant-id>';
+const API_CLIENT_ID = '<api-client-id>'; // or 'api://<api-client-id>' if you set an App ID URI
+const ISSUER = `https://${TENANT_ID}.ciamlogin.com/${TENANT_ID}/v2.0`;
+
+const checkJwt = jwt({
+  secret: jwksRsa.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `${ISSUER}/.well-known/openid-configuration`, // resolved to jwks_uri internally
+  }),
+  issuer: ISSUER,
+  audience: API_CLIENT_ID,
+  algorithms: ['RS256'],
+});
+
+function requireScope(...allowed) {
+  return (req, res, next) => {
+    const granted = (req.auth?.scp ?? '').split(' ');
+    if (allowed.some((s) => granted.includes(s))) return next();
+    res.status(403).json({ error: 'insufficient_scope' });
+  };
+}
+
+const app = express();
+app.use(express.json());
+
+app.get('/api/widgets', checkJwt, requireScope('read', 'write'), (req, res) => {
+  res.json(['widget-1', 'widget-2']);
+});
+
+app.post('/api/widgets', checkJwt, requireScope('write'), (req, res) => {
+  res.status(201).json(req.body);
+});
+
+app.listen(3000);
+```
+
+`jwks-rsa`'s `expressJwtSecret` accepts a `jwksUri` — pass the
+`.well-known/openid-configuration` discovery URL (as above) so it doesn't
+depend on hardcoding the tenant's JWKS path, which lets Microsoft rotate
+the endpoint shape without breaking your API. `express-jwt` verifies
+signature, `issuer`, `audience`, and expiry before your route handler
+ever runs; `requireScope` is a thin extra check on top for per-route
+authorization, mirroring what `[RequiredScopeOrAppPermission]` does on
+the .NET side.
+
+References: [Tutorial: Build and secure an ASP.NET Core web API](https://learn.microsoft.com/en-us/entra/identity-platform/tutorial-web-api-dotnet-core-build-app),
+[Validating tokens](https://learn.microsoft.com/en-us/azure/active-directory/develop/access-tokens#validating-tokens).
+
 ## Notes
 
 - `accountId` is the local MSAL account identifier, not the raw `oid` claim

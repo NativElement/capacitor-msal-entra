@@ -87,8 +87,13 @@ export interface MsalAuthPlugin {
    */
   acquireTokenSilent(options: AcquireTokenOptions): Promise<AcquireTokenResult>;
 
-  /** Returns the currently cached account, if any, without a network call. */
-  getAccount(): Promise<AccountInfo | null>;
+  /**
+   * Returns the currently cached account, if any, without a network call.
+   * Wrapped in `{ value }` (matching Capacitor's own `Preferences.get()`
+   * convention) because the native bridge can only resolve a call with an
+   * object, never a bare `null` - unwrap `.value` at the call site.
+   */
+  getAccount(): Promise<{ value: AccountInfo | null }>;
 
   /** Clears the local token cache, and optionally the browser session. */
   signOut(options?: SignOutOptions): Promise<void>;
