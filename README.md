@@ -412,6 +412,47 @@ the .NET side.
 References: [Tutorial: Build and secure an ASP.NET Core web API](https://learn.microsoft.com/en-us/entra/identity-platform/tutorial-web-api-dotnet-core-build-app),
 [Validating tokens](https://learn.microsoft.com/en-us/azure/active-directory/develop/access-tokens#validating-tokens).
 
+## 7. Optional: enable "Forgot password" on the sign-in page
+
+This is tenant/admin center configuration, not an app code change — it
+applies to the hosted (browser-delegated) sign-in page this plugin
+redirects to on all platforms.
+
+1. **Prerequisite**: your user flow's sign-up must register **Email with
+   password** as an identity provider — check under **Entra ID → External
+   Identities → User flows → (your flow) → Identity providers**.
+2. **Enable an authentication method for the reset** (required for
+   "Forgot password?" to actually work):
+   - **Entra ID → Authentication methods → Policies → Method → Email OTP**
+   - Under **Enable and Target**, turn it on, choose **All users** (or
+     select groups) → **Save**
+   - (SMS is an alternative, but it's a paid add-on and requires users to
+     have registered a phone number as an MFA method — Email OTP is the
+     simpler default)
+3. **Show the "Forgot password?" link on the sign-in page** (this is the
+   actual toggle — SSPR can be enabled per step 2 but the link stays
+   hidden until you do this):
+   - Search bar → **Company Branding → Default sign-in** tab → **Edit**
+   - Go to the **Sign-in form** tab, scroll to **Self-service password
+     reset**
+   - Check **Show self-service password reset**
+   - Optional: override the default "Forgot password" text (**Password
+     collection display text**), the "Can't access your account" text
+     (**Account collection display text**), or point it at a **Common
+     URL** of your own instead of Microsoft's default flow
+   - **Review + save**
+
+**Where to look when testing**: the link shows up on the **password**
+step, not the first screen — enter the email and select **Next** first,
+then "Forgot password?" appears alongside the password field.
+
+If the link still doesn't appear after this, see [Enable self-service
+password reset](https://learn.microsoft.com/en-us/entra/external-id/customers/how-to-enable-password-reset-customers)
+— common causes are not completing the branding wizard's final Review +
+save step, branding propagation delay (wait 15-30 min, test in an
+incognito window), or a per-user-flow language customization overriding
+the Company Branding default.
+
 ## Notes
 
 - `accountId` is the local MSAL account identifier, not the raw `oid` claim
