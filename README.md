@@ -1,18 +1,13 @@
-# capacitor-msal-entra-plugin
+# @nativelement/capacitor-msal-entra
 
-Capacitor plugin wrapping the native MSAL SDKs (MSAL Android / MSAL iOS) for
-sign-in against Microsoft Entra External ID, with secure native token
-caching instead of a hand-rolled browser+PKCE flow.
-
-This is a starting scaffold, not a published package — copy it into your
-Ionic project (e.g. `packages/capacitor-msal-entra-plugin`), reference it
-as a local dependency, and adjust package names / bundle ids to match your
-app.
+Capacitor plugin wrapping the native MSAL SDKs (MSAL Android / MSAL iOS) and
+`@azure/msal-browser` (web) for sign-in against Microsoft Entra External ID,
+with secure native token caching instead of a hand-rolled browser+PKCE flow.
 
 ## 1. Install into your Ionic app
 
 ```bash
-npm install /path/to/capacitor-msal-entra-plugin
+npm install @nativelement/capacitor-msal-entra
 npx cap sync
 ```
 
@@ -92,7 +87,7 @@ npx cap sync
   Xcode target) and fill in `client_id`, `redirect_uri`, `authority_url`.
 - In `Info.plist`:
   - Add a `CFBundleURLTypes` entry with `CFBundleURLSchemes` containing your
-    redirect scheme, e.g. `msauth.com.yourcompany.loyaltyos`.
+    redirect scheme, e.g. `msauth.com.example.myapp`.
   - Add `LSApplicationQueriesSchemes` with `msauthv2` and `msauthv3` if you
     want broker (Microsoft Authenticator) support.
 - Add a **Keychain Sharing** entitlement. MSAL caches accounts/tokens in the
@@ -179,9 +174,9 @@ bridge: `ionic serve`, a browser tab, or an installed PWA.
 ## 5. Usage from Angular/Ionic
 
 ```typescript
-import { MsalAuth } from 'capacitor-msal-entra-plugin';
+import { MsalAuth } from '@nativelement/capacitor-msal-entra';
 
-const API_SCOPE = 'api://loyaltyos-api/access_as_user';
+const API_SCOPE = 'api://<api-client-id>/access_as_user';
 
 async function signIn() {
   const result = await MsalAuth.signIn({ scopes: [API_SCOPE] });
@@ -458,7 +453,7 @@ the Company Branding default.
 - `accountId` is the local MSAL account identifier, not the raw `oid` claim
   — decode the returned `idToken` (or have your backend read `oid` from the
   validated access/id token) if you need the tenant's object id specifically.
-- This scaffold assumes single-tenant, single-account usage (one signed-in
+- This plugin assumes single-tenant, single-account usage (one signed-in
   user at a time). Both native SDKs support multiple accounts if you need
   account switching later.
 - Test the Android redirect URI signature hash separately for debug and

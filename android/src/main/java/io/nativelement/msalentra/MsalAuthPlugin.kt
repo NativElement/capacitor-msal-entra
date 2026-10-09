@@ -1,4 +1,4 @@
-package io.nativelement.demostarter
+package io.nativelement.msalentra
 
 import android.util.Log
 import com.getcapacitor.JSArray

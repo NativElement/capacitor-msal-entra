@@ -1,5 +1,5 @@
 {
   "client_id": "<IOS_APP_CLIENT_ID>",
-  "redirect_uri": "msauth.com.yourcompany.loyaltyos://auth",
+  "redirect_uri": "msauth.com.example.myapp://auth",
   "authority_url": "https://<your-tenant-subdomain>.ciamlogin.com/<your-tenant-subdomain>.onmicrosoft.com/"
 }

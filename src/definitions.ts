@@ -1,6 +1,6 @@
 export interface AcquireTokenOptions {
   /**
-   * Delegated scopes to request, e.g. ['api://loyaltyos-api/access_as_user'].
+   * Delegated scopes to request, e.g. ['api://<api-client-id>/access_as_user'].
    * Do NOT include 'openid', 'profile', or 'offline_access' - MSAL adds these
    * reserved scopes to every request automatically. On iOS, explicitly
    * specifying them is rejected outright; pass an empty array for a basic

@@ -18,11 +18,11 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
 
-  # Auto-added by `npx cap sync ios` because capacitor-msal-entra-plugin's
+  # Auto-added by `npx cap sync ios` because @nativelement/capacitor-msal-entra's
   # package.json declares capacitor.ios.src = "ios" and
-  # node_modules/capacitor-msal-entra-plugin contains
+  # node_modules/@nativelement/capacitor-msal-entra contains
   # CapacitorMsalEntraPlugin.podspec:
-  pod 'CapacitorMsalEntraPlugin', :path => '../../node_modules/capacitor-msal-entra-plugin'
+  pod 'CapacitorMsalEntraPlugin', :path => '../../node_modules/@nativelement/capacitor-msal-entra'
 end
 
 target 'App' do

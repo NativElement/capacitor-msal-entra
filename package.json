@@ -1,7 +1,7 @@
 {
-  "name": "capacitor-msal-entra-plugin",
-  "version": "0.2.1",
-  "description": "Capacitor plugin wrapping native MSAL SDKs (Android/iOS) for Entra External ID auth",
+  "name": "@nativelement/capacitor-msal-entra",
+  "version": "1.0.0",
+  "description": "Capacitor plugin wrapping native MSAL SDKs (Android/iOS) and msal-browser (web) for Microsoft Entra External ID authentication",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -11,14 +11,17 @@
     "dist/",
     "ios/Plugin/",
     "web/",
-    "CapacitorMsalEntraPlugin.podspec"
+    "CapacitorMsalEntraPlugin.podspec",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
-  "author": "",
+  "author": "Nativelement",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "npm run clean && tsc && rollup -c rollup.config.js",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.22.0"
@@ -40,5 +43,28 @@
     "android": {
       "src": "android"
     }
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "msal",
+    "entra",
+    "entra-external-id",
+    "azure-ad",
+    "ciam",
+    "authentication",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nativelement/capacitor-msal-entra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nativelement/capacitor-msal-entra/issues"
+  },
+  "homepage": "https://github.com/nativelement/capacitor-msal-entra#readme",
+  "publishConfig": {
+    "access": "public"
   }
 }
