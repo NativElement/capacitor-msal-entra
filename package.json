@@ -58,12 +58,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nativelement/capacitor-msal-entra.git"
+    "url": "git+https://github.com/NativElement/capacitor-msal-entra.git"
   },
   "bugs": {
-    "url": "https://github.com/nativelement/capacitor-msal-entra/issues"
+    "url": "https://github.com/NativElement/capacitor-msal-entra/issues"
   },
-  "homepage": "https://github.com/nativelement/capacitor-msal-entra#readme",
+  "homepage": "https://github.com/NativElement/capacitor-msal-entra#readme",
   "publishConfig": {
     "access": "public"
   }
