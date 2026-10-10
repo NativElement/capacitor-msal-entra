@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Android: pin MSAL to `5.10.2` (was the floating `5.+`) for reproducible builds.
+
 ## 1.0.0
 
 - First public release as `@nativelement/capacitor-msal-entra`.

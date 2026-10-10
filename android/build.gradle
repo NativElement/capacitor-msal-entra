@@ -46,7 +46,7 @@ repositories {
 
 dependencies {
     implementation project(':capacitor-android')
-    implementation "com.microsoft.identity.client:msal:5.+"
+    implementation "com.microsoft.identity.client:msal:5.10.2"
     // capacitor-android's Plugin.getActivity() returns AppCompatActivity; Kotlin
     // requires this type to be directly resolvable on this module's own
     // classpath (not just transitively via capacitor-android) to compile

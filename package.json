@@ -1,6 +1,6 @@
 {
   "name": "@nativelement/capacitor-msal-entra",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Capacitor plugin wrapping native MSAL SDKs (Android/iOS) and msal-browser (web) for Microsoft Entra External ID authentication",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
