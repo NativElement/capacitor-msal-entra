@@ -66,7 +66,7 @@ npx cap sync
 
 - Your app's `ios/App` must use CocoaPods, not Capacitor's default Swift
   Package Manager integration — this plugin ships a podspec
-  (`CapacitorMsalEntraPlugin.podspec`), not a `Package.swift`, so Capacitor
+  (`NativelementCapacitorMsalEntra.podspec`), not a `Package.swift`, so Capacitor
   CLI cannot include it via SPM. If `ios/App/CapApp-SPM` exists in your app,
   remove it, delete any `CapApp-SPM` Swift package reference from the Xcode
   project, and add an `ios/App/Podfile` (Capacitor's classic CocoaPods
@@ -76,8 +76,8 @@ npx cap sync
 - Once on CocoaPods, no manual `Podfile` edits needed for this plugin:
   `npx cap sync ios` reads this plugin's `package.json`
   (`capacitor.ios.src: "ios"`), derives the pod name
-  `CapacitorMsalEntraPlugin` from the package name, and auto-injects a
-  `pod 'CapacitorMsalEntraPlugin', :path => ...` line into your app's
+  `NativelementCapacitorMsalEntra` from the package name, and auto-injects a
+  `pod 'NativelementCapacitorMsalEntra', :path => ...` line into your app's
   `ios/App/Podfile`, which pulls in MSAL transitively via the podspec's
   `s.dependency 'MSAL'`. See `ios/App-Podfile.example` for exactly what
   that generated block looks like. Just run `npx cap sync ios` then

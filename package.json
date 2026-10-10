@@ -11,7 +11,7 @@
     "dist/",
     "ios/Plugin/",
     "web/",
-    "CapacitorMsalEntraPlugin.podspec",
+    "NativelementCapacitorMsalEntra.podspec",
     "LICENSE",
     "CHANGELOG.md"
   ],

@@ -4,7 +4,7 @@
 # a dependency in your app's package.json.
 #
 # You should NOT need to hand-edit this for the plugin itself — CocoaPods
-# resolves `s.dependency 'MSAL'` from CapacitorMsalEntraPlugin.podspec
+# resolves `s.dependency 'MSAL'` from NativelementCapacitorMsalEntra.podspec
 # automatically.
 # The one thing worth watching: if `pod install` complains about static vs.
 # dynamic linkage for MSAL, add `use_frameworks!` (MSAL supports either,
@@ -21,12 +21,12 @@ def capacitor_pods
   # Auto-added by `npx cap sync ios` because @nativelement/capacitor-msal-entra's
   # package.json declares capacitor.ios.src = "ios" and
   # node_modules/@nativelement/capacitor-msal-entra contains
-  # CapacitorMsalEntraPlugin.podspec:
-  pod 'CapacitorMsalEntraPlugin', :path => '../../node_modules/@nativelement/capacitor-msal-entra'
+  # NativelementCapacitorMsalEntra.podspec:
+  pod 'NativelementCapacitorMsalEntra', :path => '../../node_modules/@nativelement/capacitor-msal-entra'
 end
 
 target 'App' do
   capacitor_pods
   # MSAL itself does NOT need a manual line here — it comes in transitively
-  # via CapacitorMsalEntraPlugin.podspec's `s.dependency 'MSAL', '~> 1.2'`.
+  # via NativelementCapacitorMsalEntra.podspec's `s.dependency 'MSAL', '~> 1.2'`.
 end
