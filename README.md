@@ -4,6 +4,16 @@ Capacitor plugin wrapping the native MSAL SDKs (MSAL Android / MSAL iOS) and
 `@azure/msal-browser` (web) for sign-in against Microsoft Entra External ID,
 with secure native token caching instead of a hand-rolled browser+PKCE flow.
 
+[![npm version](https://img.shields.io/npm/v/@nativelement/capacitor-msal-entra)](https://www.npmjs.com/package/@nativelement/capacitor-msal-entra)
+
+## Resources
+
+- **Tutorial:** [Entra External ID Login in Ionic: A Capacitor MSAL Plugin Tutorial](https://habitualcs.io/post/entra-external-id-login-in-ionic-a-capacitor-msal-plugin-tutorial)
+  — a step-by-step walkthrough of configuring Microsoft Entra External ID and
+  integrating this plugin into an Ionic app.
+- **npm package:** [@nativelement/capacitor-msal-entra](https://www.npmjs.com/package/@nativelement/capacitor-msal-entra)
+- **Source & issues:** [github.com/NativElement/capacitor-msal-entra](https://github.com/NativElement/capacitor-msal-entra)
+
 ## 1. Install into your Ionic app
 
 ```bash

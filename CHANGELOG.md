@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- Docs: add Resources section to the README linking the tutorial, npm package and repository.
+
 ## 1.0.1
 
 - Android: pin MSAL to `5.10.2` (was the floating `5.+`) for reproducible builds.
